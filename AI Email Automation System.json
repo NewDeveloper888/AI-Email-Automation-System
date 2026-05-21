@@ -1,0 +1,516 @@
+{
+  "name": "Email classifer+Agent",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "simple": false,
+        "filters": {},
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmailTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        32,
+        16
+      ],
+      "id": "61800bce-ef76-4820-bcdd-8666bdd2dcce",
+      "name": "Gmail Trigger",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "tgVd5FPd5dNoWMRP",
+          "name": "Gmail account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "inputText": "={{ $json.text }}",
+        "categories": {
+          "categories": [
+            {
+              "category": "support",
+              "description": "this for support emails asking just general question"
+            },
+            {
+              "category": "Priority",
+              "description": "High-importance emails that demand immediate attention, response, or action. This includes time-sensitive requests, urgent issues from key stakeholders or VIP clients, messages with deadlines, or critical alerts that require a resolution within a very short timeframe."
+            },
+            {
+              "category": "Promotions",
+              "description": "Marketing communications, newsletters, and promotional offers. These are typically mass-sent emails from companies or services regarding discounts, product updates, coupons, or advertisements. They are non-personal, automated, and do not require a personal response or immediate manual action."
+            },
+            {
+              "category": "Finance",
+              "description": "Emails related to financial transactions, billing, and accounting operations. This includes incoming or outgoing invoices, payment receipts, bank statements, tax-related documents, and notifications about subscription renewals or payroll. These messages typically contain monetary values, currency symbols, and formal financial terms."
+            }
+          ]
+        },
+        "options": {
+          "systemPromptTemplate": "Please classify the text provided by the user into one of the following categories: {categories}, and use the provided formatting instructions below. Don't explain, and only output the json."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.textClassifier",
+      "typeVersion": 1.1,
+      "position": [
+        288,
+        0
+      ],
+      "id": "b6615fc5-e0d0-4730-b94b-80a3c8c122cb",
+      "name": "Text Classifier"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        288,
+        432
+      ],
+      "id": "e1e01b60-745e-4f3d-a322-407b211edd88",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "XVrqBzd5Mdm0M1oT",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "addLabels",
+        "messageId": "={{ $('Gmail Trigger').item.json.id }}",
+        "labelIds": [
+          "Label_6739738957034425164"
+        ]
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        832,
+        -336
+      ],
+      "id": "1b5d1c6c-7c2a-4ee9-b8a0-bdab43437c51",
+      "name": "Label = \"support\"",
+      "webhookId": "97bbf471-8ca3-4d64-a0c1-bc2ee1085756",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "tgVd5FPd5dNoWMRP",
+          "name": "Gmail account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "addLabels",
+        "messageId": "={{ $('Gmail Trigger').item.json.id }}",
+        "labelIds": [
+          "Label_4521406080450233481"
+        ]
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        848,
+        -32
+      ],
+      "id": "6338bafc-089d-4229-a14f-75508d4e49d3",
+      "name": "Label = \"priority\"",
+      "webhookId": "97bbf471-8ca3-4d64-a0c1-bc2ee1085756",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "tgVd5FPd5dNoWMRP",
+          "name": "Gmail account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "addLabels",
+        "messageId": "={{ $('Gmail Trigger').item.json.id }}",
+        "labelIds": [
+          "Label_6927017093627183946"
+        ]
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        864,
+        208
+      ],
+      "id": "00ad8a26-271b-4756-a5f8-9d88771dcaa3",
+      "name": "Label = \"promotions\"",
+      "webhookId": "97bbf471-8ca3-4d64-a0c1-bc2ee1085756",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "tgVd5FPd5dNoWMRP",
+          "name": "Gmail account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "addLabels",
+        "messageId": "={{ $('Gmail Trigger').item.json.id }}",
+        "labelIds": [
+          "Label_508860579633934760"
+        ]
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        864,
+        464
+      ],
+      "id": "5ca8db68-ed94-4ee9-9b05-489cc5e12113",
+      "name": "Label = \"Finance\"",
+      "webhookId": "97bbf471-8ca3-4d64-a0c1-bc2ee1085756",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "tgVd5FPd5dNoWMRP",
+          "name": "Gmail account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "draft",
+        "subject": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Subject', ``, 'string') }}",
+        "message": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Message', ``, 'string') }}",
+        "options": {
+          "threadId": "={{ $json.threadId }}",
+          "sendTo": "={{ $('Gmail Trigger').item.json.from.value[0].address }}"
+        }
+      },
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.2,
+      "position": [
+        1808,
+        160
+      ],
+      "id": "fa5ff503-966e-4c0c-b785-24ea20f18759",
+      "name": "Draft email",
+      "webhookId": "7c587af3-2eb8-428b-b446-5f01c73f327e",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "tgVd5FPd5dNoWMRP",
+          "name": "Gmail account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=email from:{{ $('Text Classifier').item.json.from.value[0].name }}\n\n\nemail text:{{ $('Text Classifier').item.json.text }}",
+        "options": {
+          "systemMessage": "#Overview\nYou are a customer support representative named Ali . Your job is to respond to customer inquiries in a friendly and professional manner. -always sign off as Mahmoud Yasser from AI easier company\n\n#Tools\nDraft email -use it to send customer support  reply email \n\n#Rules\n- keep email concise"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        1072,
+        -336
+      ],
+      "id": "382ce189-f17f-4433-8e55-28a1277d489b",
+      "name": "AI Agent customer support"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=email from:{{ $('Text Classifier').item.json.from.value[0].name }}\n\n\nemail text:{{ $('Text Classifier').item.json.text }}",
+        "options": {
+          "systemMessage": "#Overview\nYou are an agent in charge of high priority emails. Your job is to summarize incoming emails and escalate them to the human.\n\n#Tools\nTelegram - Use this to send the summary of the email once it's summarised.\n\n#Rules\n- Keep the emails concise"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        1056,
+        -32
+      ],
+      "id": "6018e61f-b09d-4c3d-9554-c5c42e23ef32",
+      "name": "priority Agent"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=email from:{{ $('Text Classifier').item.json.from.value[0].name }}\n\n\nemail text:{{ $('Text Classifier').item.json.text }}",
+        "options": {
+          "systemMessage": "#Overview\nYou are a promotional support representative named Ali . Your job is to respond to promotional inquiries in a friendly and professional manner. -always sign off as Mahmoud Yasser from AI easier company\n\n#Tools\nDraft email -use it to send customer support  reply email \n\n#Rules\n- keep email concise"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        1072,
+        208
+      ],
+      "id": "4d9705cf-9500-4669-9151-aa5b5dbe09f3",
+      "name": "promotion Agent"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=email from:{{ $('Text Classifier').item.json.from.value[0].name }}\n\n\nemail text:{{ $('Text Classifier').item.json.text }}",
+        "options": {
+          "systemMessage": "#Overview\nYou are a finance support representative named Ali . Your job is to respond to finance inquiries in a friendly and professional manner. -always sign off as Mahmoud Yasser from AI easier company\n\n#Tools\nDraft email -use it to send customer support  reply email \n\n#Rules\n- keep email concise"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        1088,
+        464
+      ],
+      "id": "a48107af-6963-4890-a8a4-a69c7caa8428",
+      "name": "Finance"
+    },
+    {
+      "parameters": {
+        "chatId": "5997195519",
+        "text": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Text', ``, 'string') }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegramTool",
+      "typeVersion": 1.2,
+      "position": [
+        2000,
+        144
+      ],
+      "id": "73297243-0304-49b5-9664-759182367ff8",
+      "name": "Telegram",
+      "webhookId": "b0bd28b6-a518-4d5a-ac19-91cd7a8dbc24",
+      "credentials": {
+        "telegramApi": {
+          "id": "rvxwXbta7R7ZfMvN",
+          "name": "Telegram account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## Watch & Classify\n",
+        "height": 880,
+        "width": 816,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -128,
+        -176
+      ],
+      "typeVersion": 1,
+      "id": "95455346-cc54-4dc3-ab57-c5471647201f",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "## Write Email reply\n",
+        "height": 1120,
+        "width": 816,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        688,
+        -416
+      ],
+      "typeVersion": 1,
+      "id": "123e64ef-a089-433e-81f5-682d40bff688",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "##  Alert Team or Email back\n",
+        "height": 800,
+        "width": 816,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1520,
+        -96
+      ],
+      "typeVersion": 1,
+      "id": "313dd4d9-de63-4efc-8ceb-77a5484a28b1",
+      "name": "Sticky Note2"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Gmail Trigger": {
+      "main": [
+        [
+          {
+            "node": "Text Classifier",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Text Classifier",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "AI Agent customer support",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "priority Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "Finance",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "promotion Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Text Classifier": {
+      "main": [
+        [
+          {
+            "node": "Label = \"support\"",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Label = \"priority\"",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Label = \"promotions\"",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Label = \"Finance\"",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Label = \"support\"": {
+      "main": [
+        [
+          {
+            "node": "AI Agent customer support",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Draft email": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent customer support",
+            "type": "ai_tool",
+            "index": 0
+          },
+          {
+            "node": "promotion Agent",
+            "type": "ai_tool",
+            "index": 0
+          },
+          {
+            "node": "Finance",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Label = \"priority\"": {
+      "main": [
+        [
+          {
+            "node": "priority Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Label = \"promotions\"": {
+      "main": [
+        [
+          {
+            "node": "promotion Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Label = \"Finance\"": {
+      "main": [
+        [
+          {
+            "node": "Finance",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Telegram": {
+      "ai_tool": [
+        [
+          {
+            "node": "priority Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "ff890e8a-8ec7-4eee-b9a5-63c1443751fc",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "994cdf07effffbffbd3f1ee45728e0a0d3e9533f00be6654304ea180f59142de"
+  },
+  "id": "Qb0MCgpq7HmWeaOq",
+  "tags": []
+}
